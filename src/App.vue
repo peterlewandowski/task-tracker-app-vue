@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <Header title="Task Tracker"/>
-    <Tasks @delete-task="deleteTask" :tasks="tasks" /> 
+    <Tasks @toggle-reminder="toggleReminder" @delete-task="deleteTask" :tasks="tasks" /> 
     <!-- line 4 does: v-bind tasks prop to tasks data -->
   </div>
 </template>
@@ -23,6 +23,14 @@ export default {
     if (confirm('Are you sure?')) {
         this.tasks = this.tasks.filter((task) => task.id !== id) // 'reset' tasks to tasks w/o deletedTask of 'id'
       }
+    },
+    toggleReminder(id) {
+      this.tasks = this.tasks.map((task) => task.id === id ? {...task, reminder: !task.reminder} : task)
+      /* We're updating a task by changing the 'reminder' value from either true to false, or false to true. */
+      /* We want to map through tasks and return an array of what we want (updated tasks) */
+      /* For each task, we want to check if task.id is equal to id, if it is, return an array of objects where... */
+      /* we have the initial task properties (spread across the initial task), then change the initial reminder to... */
+      /* the opposite of the current task reminder. Else, if it doesn't match the id, just return the initial task  */
     }
   },
   created() {
