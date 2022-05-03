@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <Header title="Task Tracker"/>
-    <Tasks :tasks="tasks" /> 
+    <Tasks @delete-task="deleteTask" :tasks="tasks" /> 
     <!-- line 4 does: v-bind tasks prop to tasks data -->
   </div>
 </template>
@@ -16,6 +16,13 @@ export default {
   data() {
     return {
       tasks: []
+    }
+  },
+  methods: {
+    deleteTask(id) {
+    if (confirm('Are you sure?')) {
+        this.tasks = this.tasks.filter((task) => task.id !== id) // 'reset' tasks to tasks w/o deletedTask of 'id'
+      }
     }
   },
   created() {
