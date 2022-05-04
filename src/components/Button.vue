@@ -11,7 +11,7 @@ export default {
     },
     methods: {
         onClick() {
-            console.log('click');
+            this.$emit('btn-click') /* $emit this method up to parent component */
         }
     }
 }

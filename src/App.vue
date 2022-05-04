@@ -1,7 +1,10 @@
 <template>
   <div class="container">
-    <Header title="Task Tracker"/>
-    <AddTask @add-task="addTask" />
+    <Header @toggle-add-task="toggleAddTask" title="Task Tracker" :showAddTask="showAddTask" />
+    <div v-show="showAddTask">
+    <!-- place AddTask inside <div>, v-show to display <div> only if value is true (in data()) -->
+      <AddTask @add-task="addTask" />
+    </div>
     <Tasks @toggle-reminder="toggleReminder" @delete-task="deleteTask" :tasks="tasks" /> 
     <!-- line 4 does: v-bind tasks prop to tasks data -->
   </div>
@@ -17,10 +20,14 @@ export default {
   components: { Header, Tasks, AddTask },
   data() {
     return {
-      tasks: []
+      tasks: [],
+      showAddTask: false
     }
   },
   methods: {
+    toggleAddTask() {
+      this.showAddTask = !this.showAddTask /* changes the boolean value in data() */
+    },
     addTask(task) {
       this.tasks = [...this.tasks, task]
     },
