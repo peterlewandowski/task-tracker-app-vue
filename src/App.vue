@@ -45,7 +45,14 @@ export default {
       /* the opposite of the current task reminder. Else, if it doesn't match the id, just return the initial task  */
     },
     async fetchTasks() {
-      const res = await fetch('http://localhost:5000/tasks')
+      const res = await fetch('api/tasks')
+
+      const data = await res.json()
+
+      return data
+    },
+    async fetchTask(id) {
+      const res = await fetch(`api/tasks/${id}`)
 
       const data = await res.json()
 
