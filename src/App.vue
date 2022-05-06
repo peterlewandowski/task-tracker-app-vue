@@ -2,10 +2,10 @@
   <div class="container">
     <Header @toggle-add-task="toggleAddTask" title="Task Tracker" :showAddTask="showAddTask" />
     <div v-show="showAddTask">
-    <!-- place AddTask inside <div>, v-show to display <div> only if value is true (in data()) -->
+      <!-- place AddTask inside <div>, v-show to display <div> only if value is true (in data()) -->
       <AddTask @add-task="addTask" />
     </div>
-    <Tasks @toggle-reminder="toggleReminder" @delete-task="deleteTask" :tasks="tasks" /> 
+    <Tasks @toggle-reminder="toggleReminder" @delete-task="deleteTask" :tasks="tasks" />
     <!-- line 4 does: v-bind tasks prop to tasks data -->
   </div>
 </template>
@@ -28,16 +28,45 @@ export default {
     toggleAddTask() {
       this.showAddTask = !this.showAddTask /* changes the boolean value in data() */
     },
-    addTask(task) {
-      this.tasks = [...this.tasks, task]
+    async addTask(task) {
+      const res = await fetch('api/tasks', {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json',
+        },
+        body: JSON.stringify(task),
+      })
+
+      const data = await res.json()
+
+      this.tasks = [...this.tasks, data]
     },
-    deleteTask(id) {
-    if (confirm('Are you sure?')) {
-        this.tasks = this.tasks.filter((task) => task.id !== id) // 'reset' tasks to tasks w/o deletedTask of 'id'
+    async deleteTask(id) {
+      if (confirm('Are you sure?')) {
+        const res = await fetch(`api/tasks/${id}`, {
+          method: 'DELETE',
+        })
+
+        res.status === 200
+          ? (this.tasks = this.tasks.filter((task) => task.id !== id)) /* 'reset' tasks to tasks w/o deletedTask of 'id' */
+          : alert('Error deleting task')
       }
     },
-    toggleReminder(id) {
-      this.tasks = this.tasks.map((task) => task.id === id ? {...task, reminder: !task.reminder} : task)
+    async toggleReminder(id) {
+      const taskToToggle = await this.fetchTask(id)
+      const updateTask = {...taskToToggle, reminder: !taskToToggle.reminder}
+
+      const res = await fetch(`api/tasks/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-type': 'application/json'
+        },
+        body: JSON.stringify(updateTask)
+      })
+
+      const data = await res.json()
+
+      this.tasks = this.tasks.map((task) => task.id === id ? { ...task, reminder: data.reminder } : task)
       /* We're updating a task by changing the 'reminder' value from either true to false, or false to true. */
       /* We want to map through tasks and return an array of what we want (updated tasks) */
       /* For each task, we want to check if task.id is equal to id, if it is, return an array of objects where... */
