@@ -1,7 +1,7 @@
 <template>
     <header>
         <h1>{{ title }}</h1>
-        <Button @btn-click="$emit('toggle-add-task')" :text="showAddTask ? 'Hide' : 'AddTask'" :color="showAddTask ? 'red' : 'green'" />
+        <Button v-show="homePage" @btn-click="$emit('toggle-add-task')" :text="showAddTask ? 'Hide' : 'AddTask'" :color="showAddTask ? 'red' : 'green'" />
         <!-- catching btn-click from Button, $emit up to App.vue, conditionally render Button text and color -->
     </header>
 </template>
@@ -14,7 +14,16 @@ export default {
         title: String,
         showAddTask: Boolean /* receiving showAddTask as props from App.vue */
     },
-    components: { Button }
+    components: { Button },
+    computed: {
+        homePage() {
+            if(this.$route.path === '/') {
+                return true
+            } else {
+                return false
+            }
+        }
+    }
 }
 </script>
 
